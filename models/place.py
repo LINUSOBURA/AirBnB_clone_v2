@@ -1,11 +1,27 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
+from sqlalchemy import *
 from sqlalchemy import Column, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 import models
+from models.amenity import Amenity
 from models.base_model import Base, BaseModel
 from models.review import Review
+
+if models.storage_type == 'db':
+    place_amenity = Table(
+        'place_amenity', Base.metadata,
+        Column('place_id',
+               String(60),
+               ForeignKey('places.id'),
+               primary_key=True,
+               nullable=False),
+        Column('amenity_id',
+               String(60),
+               ForeignKey('amenities.id'),
+               primary_key=True,
+               nullable=False))
 
 
 class Place(BaseModel, Base):
@@ -24,6 +40,9 @@ class Place(BaseModel, Base):
         longitude = Column(Float, nullable=True)
         amenity_ids = []
         reviews = relationship('Review', backref='place', cascade='delete')
+        amenities = relationship('Amenity',
+                                 secondary=place_amenity,
+                                 viewonly=False)
     else:
         city_id = ""
         user_id = ""
@@ -45,3 +64,19 @@ class Place(BaseModel, Base):
                 if review.place_id == self.id:
                     reviews_list.append(review)
             return reviews_list
+
+        @property
+        def amenities(self):
+            """returns the list of amenity instances based on the amenity_ids"""
+            amenity_list = []
+            for amenity in models.storage.all(Amenity).values():
+                if amenity.id in self.amenity_ids:
+                    amenity_list.append(amenity)
+            return amenity_list
+
+        @amenities.setter
+        def amenities(self, obj):
+            """adds an amenity id to the attribute amenity_ids"""
+            if isinstance(obj, Amenity):
+                if obj.id not in self.amenity_ids:
+                    self.amenity_ids.append(obj.id)
