@@ -18,13 +18,14 @@ def do_pack():
     now = datetime.now()
     date = now.strftime("%Y%m%d%H%M%S")
     local("tar -cvzf versions/web_static_{}.tgz web_static".format(date))
+    return "versions/web_static_{}.tgz".format(date)
 
 
 def do_deploy(archive_path):
     """ Deploying the archive to web servers
     
     Returns False if the file at the path archive_path doesn’t exist """
-    if os.path.exists(archive_path):
+    if not os.path.exists(archive_path):
         return False
 
     arch_name = archive_path.split('/')[-1]
@@ -51,3 +52,11 @@ def do_deploy(archive_path):
         return True
     except Exception:
         return False
+
+
+def deploy():
+    archive_path = do_pack()
+    if not archive_path:
+        return False
+
+    return do_deploy(archive_path)
