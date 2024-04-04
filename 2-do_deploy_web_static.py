@@ -12,14 +12,6 @@ from fabric.api import *
 env.hosts = ['3.85.177.85', '18.206.192.69']
 
 
-def do_pack():
-    """generates a .tgz archive from the contents of the web_static folder"""
-    local("sudo mkdir -p versions")
-    now = datetime.now()
-    date = now.strftime("%Y%m%d%H%M%S")
-    local(f"tar -cvzf versions/webstatic_{date}.tgz web_static")
-
-
 def do_deploy(archive_path):
     """ Deploying the archive to web servers """
     """ Returns False if the file at the path archive_path doesn’t exist """
