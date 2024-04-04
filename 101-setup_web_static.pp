@@ -1,64 +1,55 @@
-# Define a Puppet class for setting up web servers for deployment of web_static
-class web_server_setup {
+# web_server_setup.pp
 
-  # Update package repositories
-  exec { 'apt-update':
-    command => '/usr/bin/apt-get update',
-    path    => '/usr/bin',
-    before  => Package['nginx'],
-  }
-
-  # Install nginx package
-  package { 'nginx':
-    ensure  => installed,
-    require => Exec['apt-update'],
-  }
-
-  # Creating directories and files
-  file { '/data/web_static/releases/test/':
-    ensure => directory,
-  }
-
-  file { '/data/web_static/shared/':
-    ensure => directory,
-  }
-
-  file { '/data/web_static/releases/test/index.html':
-    ensure  => file,
-    content => '<h1>Testing Deployment</h1>',
-  }
-
-  # Creating symbolic link
-  file { '/data/web_static/current':
-    ensure => link,
-    target => '/data/web_static/releases/test/',
-    force  => true,
-  }
-
-  # Changing ownership
-  file { '/data/':
-    ensure  => directory,
-    owner   => 'ubuntu',
-    group   => 'ubuntu',
-    recurse => true,
-  }
-
-  # Inserting new location into nginx configuration server block
-  file_line { 'nginx-hbnb-static':
-    path    => '/etc/nginx/sites-available/default',
-    line    => "        location /hbnb_static {\n\talias /data/web_static/current;\n\t}",
-    match   => "^\\s*server_name",
-    require => Package['nginx'],
-    notify  => Service['nginx'],
-  }
-
-  # Restart nginx service
-  service { 'nginx':
-    ensure    => running,
-    enable    => true,
-    subscribe => File_line['nginx-hbnb-static'],
-  }
+# Package installation
+package { 'nginx':
+  ensure => installed,
 }
 
-# Apply the web_server_setup class
-include web_server_setup
+# Firewall rule
+firewall { 'Allow Nginx HTTP':
+  port   => 80,
+  proto  => tcp,
+  action => accept,
+}
+
+# Directory structure
+file { ['/data', '/data/web_static', '/data/web_static/releases', '/data/web_static/shared', '/data/web_static/releases/test']:
+  ensure => 'directory',
+}
+
+# HTML index file creation
+file { '/data/web_static/releases/test/index.html':
+  ensure  => 'file',
+  content => "<html>\n  <head>\n  </head>\n  <body>\n    Holberton School\n  </body>\n</html>\n",
+}
+
+# Symbolic link creation
+file { '/data/web_static/current':
+  ensure  => 'link',
+  target  => '/data/web_static/releases/test',
+  force   => true,
+  require => File['/data/web_static/releases/test/index.html'],
+}
+
+# Ownership
+file { '/data':
+  owner   => 'ubuntu',
+  group   => 'ubuntu',
+  recurse => true,
+}
+
+# Nginx configuration
+file_line { 'nginx_location_config':
+  path    => '/etc/nginx/sites-enabled/default',
+  line    => '        location /hbnb_static { alias /data/web_static/current/; }',
+  match   => 'listen 80 default_server',
+  require => Package['nginx'],
+  notify  => Service['nginx'],
+}
+
+# Nginx service restart
+service { 'nginx':
+  ensure    => 'running',
+  enable    => true,
+  subscribe => File_line['nginx_location_config'],
+}
