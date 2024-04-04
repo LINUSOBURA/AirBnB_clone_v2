@@ -27,29 +27,26 @@ def do_deploy(archive_path):
         return False
 
     arch_name = archive_path.split('/')[-1]
-    arch_name_ntgz = arch_name.split('.')[0]
+    arch_name_ntgz = '/data/web_static/releases/{}'.format(
+        arch_name.split('.')[0])
 
     try:
         """ Upload the archive to the /tmp/ directory of the web server """
         put(archive_path, f"/tmp/{arch_name}")
 
-        run(f"mkdir -p /data/web_static/releases/{arch_name_ntgz}/")
+        run(f"mkdir -p {arch_name_ntgz}/")
         """ Uncompress the archive """
-        run(f"tar -xzvf /tmp/{arch_name} -C\
-            /data/web_static/releases/{arch_name_ntgz}/")
+        run(f"tar -xzvf /tmp/{arch_name} -C {arch_name_ntgz}/")
         """ Delete the archive from the web server """
         run(f"rm /tmp/{arch_name}")
 
-        run(f"mv /data/web_static/releases/{arch_name_ntgz}/web_static/*\
-            /data/web_static/releases/{arch_name_ntgz}")
+        run(f"mv {arch_name_ntgz}/web_static/* {arch_name_ntgz}")
 
-        run(f"rm -rf /data/web_static/releases/{arch_name_ntgz}/web_static")
+        run(f"rm -rf {arch_name_ntgz}/web_static")
         """ Delete the symbolic link /data/web_static/current """
         run("rm -rf /data/web_static/current")
         """ Create a new the symbolic link /data/web_static/current """
-        run(f"ln -s /data/web_static/releases/{arch_name_ntgz}/\
-            /data/web_static/current")
+        run(f"ln -s {arch_name_ntgz}/ /data/web_static/current")
+        return True
     except Exception as e:
         return False
-
-    return True
