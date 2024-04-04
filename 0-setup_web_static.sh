@@ -4,8 +4,12 @@ sudo apt-get update
 sudo apt-get -y install nginx
 
 #creating directories and files
-sudo mkdir -p /data/web_static/releases/test/
+sudo mkdir -p /data/
+sudo mkdir -p /data/web_static/
+sudo mkdir -p /data/web_static/releases/
 sudo mkdir -p /data/web_static/shared/
+sudo mkdir -p /data/web_static/releases/test/
+sudo touch /data/web_static/releases/test/index.html
 echo "<h1>Testing Deployment</h1>" > /data/web_static/releases/test/index.html
 
 #Creating symbolic link
