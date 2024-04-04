@@ -23,7 +23,7 @@ def do_pack():
 
 def do_deploy(archive_path):
     """ Deploying the archive to web servers
-    
+
     Returns False if the file at the path archive_path doesn’t exist """
     if not os.path.exists(archive_path):
         return False
@@ -55,6 +55,8 @@ def do_deploy(archive_path):
 
 
 def deploy():
+    """creates and distributes an archive to your web servers,
+    using the function deploy"""
     archive_path = do_pack()
     if not archive_path:
         return False
