@@ -55,8 +55,7 @@ def do_deploy(archive_path):
 
 
 def deploy():
-    """creates and distributes an archive to your web servers,
-    using the function deploy"""
+    """creates and distributes an archive to your web servers"""
     archive_path = do_pack()
     if not archive_path:
         return False

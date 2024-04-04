@@ -24,7 +24,7 @@ def do_deploy(archive_path):
     """ Deploying the archive to web servers
     
     Returns False if the file at the path archive_path doesn’t exist """
-    if os.path.exists(archive_path):
+    if not os.path.exists(archive_path):
         return False
 
     arch_name = archive_path.split('/')[-1]
