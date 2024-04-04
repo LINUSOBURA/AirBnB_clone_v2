@@ -23,7 +23,7 @@ def do_pack():
 def do_deploy(archive_path):
     """ Deploying the archive to web servers """
     """ Returns False if the file at the path archive_path doesn’t exist """
-    if not archive_path or not os.path.exists(archive_path):
+    if os.path.exists(archive_path):
         return False
 
     arch_name = archive_path.split('/')[-1]
@@ -34,19 +34,19 @@ def do_deploy(archive_path):
         """ Upload the archive to the /tmp/ directory of the web server """
         put(archive_path, f"/tmp/{arch_name}")
 
-        run(f"mkdir -p {arch_name_ntgz}/")
+        run("mkdir -p {}/".format(arch_name_ntgz))
         """ Uncompress the archive """
-        run(f"tar -xzvf /tmp/{arch_name} -C {arch_name_ntgz}/")
+        run("tar -xzvf /tmp/{} -C {}/".format(arch_name, arch_name_ntgz))
         """ Delete the archive from the web server """
-        run(f"rm /tmp/{arch_name}")
+        run("rm /tmp/{}".format(arch_name))
 
-        run(f"mv {arch_name_ntgz}/web_static/* {arch_name_ntgz}")
+        run("mv {}/web_static/* {}".format(arch_name_ntgz, arch_name_ntgz))
 
-        run(f"rm -rf {arch_name_ntgz}/web_static")
+        run("rm -rf {}/web_static".format(arch_name_ntgz))
         """ Delete the symbolic link /data/web_static/current """
         run("rm -rf /data/web_static/current")
         """ Create a new the symbolic link /data/web_static/current """
-        run(f"ln -s {arch_name_ntgz}/ /data/web_static/current")
+        run("ln -s {}/ /data/web_static/current".format(arch_name_ntgz))
         return True
     except Exception as e:
         return False
