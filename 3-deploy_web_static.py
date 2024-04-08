@@ -29,26 +29,26 @@ def do_deploy(archive_path):
         return False
 
     arch_name = archive_path.split('/')[-1]
-    arch_name_ntgz = '/data/web_static/releases/' + "{}".format(
+    arch_name_ntgz = "/data/web_static/releases/" + "{}".format(
         arch_name.split('.')[0])
 
     try:
         """ Upload the archive to the /tmp/ directory of the web server """
-        put(archive_path, "/tmp/{}".format(arch_name))
+        put(archive_path, '/tmp/')
 
-        run("mkdir -p {}/".format(arch_name_ntgz))
+        run('mkdir -p {}/'.format(arch_name_ntgz))
         """ Uncompress the archive """
         run("tar -xzvf /tmp/{} -C {}/".format(arch_name, arch_name_ntgz))
         """ Delete the archive from the web server """
-        run("rm /tmp/{}".format(arch_name))
+        run('rm /tmp/{}'.format(arch_name))
 
-        run("mv {}/web_static/* {}/".format(arch_name_ntgz, arch_name_ntgz))
+        run('mv {}/web_static/* {}/'.format(arch_name_ntgz, arch_name_ntgz))
 
-        run("rm -rf {}/web_static".format(arch_name_ntgz))
+        run('rm -rf {}/web_static'.format(arch_name_ntgz))
         """ Delete the symbolic link /data/web_static/current """
-        run("rm -rf /data/web_static/current")
+        run('rm -rf /data/web_static/current')
         """ Create a new the symbolic link /data/web_static/current """
-        run("ln -s {}/ /data/web_static/current".format(arch_name_ntgz))
+        run('ln -s {}/ /data/web_static/current'.format(arch_name_ntgz))
         return True
     except Exception:
         return False
