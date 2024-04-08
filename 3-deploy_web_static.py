@@ -34,7 +34,7 @@ def do_deploy(archive_path):
 
     try:
         """ Upload the archive to the /tmp/ directory of the web server """
-        put(archive_path, f"/tmp/{arch_name}")
+        put(archive_path, "/tmp/{}".format(arch_name))
 
         run("mkdir -p {}/".format(arch_name_ntgz))
         """ Uncompress the archive """
@@ -42,7 +42,7 @@ def do_deploy(archive_path):
         """ Delete the archive from the web server """
         run("rm /tmp/{}".format(arch_name))
 
-        run("mv {}/web_static/* {}".format(arch_name_ntgz, arch_name_ntgz))
+        run("mv {}/web_static/* {}/".format(arch_name_ntgz, arch_name_ntgz))
 
         run("rm -rf {}/web_static".format(arch_name_ntgz))
         """ Delete the symbolic link /data/web_static/current """
