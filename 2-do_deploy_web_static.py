@@ -28,7 +28,7 @@ def do_deploy(archive_path):
         return False
 
     arch_name = archive_path.split('/')[-1]
-    arch_name_ntgz = '/data/web_static/releases/{}'.format(
+    arch_name_ntgz = '/data/web_static/releases/' + "{}".format(
         arch_name.split('.')[0])
 
     try:
