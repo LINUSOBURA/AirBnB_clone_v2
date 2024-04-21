@@ -3,7 +3,7 @@
 script that starts a Flask web application
 """
 
-from flask import Flask
+from flask import Flask, abort
 
 app = Flask(__name__)
 
@@ -36,9 +36,11 @@ def py_text(text):
 
 @app.route("/number/<n>", strict_slashes=False)
 def number_n(n):
-    number = int(n)
-    if isinstance(number, int):
-        return f"{n} is a number"
+    try:
+        number = int(n)
+        return "{} is a number".format(number)
+    except ValueError:
+        abort(404)
 
 
 if __name__ == "__main__":
