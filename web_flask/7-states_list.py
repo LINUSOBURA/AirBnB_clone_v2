@@ -2,16 +2,13 @@
 """
 script that starts a Flask web application
 """
-from os import getenv
 
-from flask import Flask, abort, jsonify, render_template
+from flask import Flask, render_template
+from models import *
 from models import storage
+from models.state import State
 
 app = Flask(__name__)
-
-
-def get_states():
-    return storage.all()
 
 
 @app.teardown_appcontext
@@ -20,15 +17,10 @@ def teardown_storage(exception):
 
 
 @app.route("/states_list", strict_slashes=False)
-def states():
-    states_data = get_states()
+def states_list():
+    states_data = sorted(list(storage.all(State).values()),
+                         key=lambda x: x.name)
     return render_template('7-states_list.html', states=states_data)
-
-
-@app.route("/states", strict_slashes=False)
-def test():
-    states_data = get_states()
-    return list(states_data)
 
 
 if __name__ == "__main__":
