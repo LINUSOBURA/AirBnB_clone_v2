@@ -1,12 +1,9 @@
-#!usr/bin/python3
+#!/usr/bin/python3
 """
 DBStorage class module
 """
 
 from os import getenv
-
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
 
 from models.amenity import Amenity
 from models.base_model import Base
@@ -15,6 +12,8 @@ from models.place import Place
 from models.review import Review
 from models.state import State
 from models.user import User
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 
 class DBStorage:
@@ -66,4 +65,4 @@ class DBStorage:
 
     def close(self):
         """call remove() method on the private session attribute"""
-        self.__session.remove()
+        self.__session.close()
