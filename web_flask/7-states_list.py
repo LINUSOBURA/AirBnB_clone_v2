@@ -1,5 +1,11 @@
 #!/usr/bin/python3
-"""Module that get states from storage and returns
+"""This module serves a Flask application to display a list of states.
+
+The application retrieves states data from storage, sorts them by name,
+and renders them using a template.
+
+Attributes:
+    app (Flask): The Flask application instance.
 """
 
 from flask import Flask, render_template
@@ -11,7 +17,11 @@ app = Flask(__name__)
 
 @app.route("/states_list", strict_slashes=False)
 def states_list():
-    """Get states sorted by names and render on template"""
+    """Retrieve states data, sort them by name, and render them on a template.
+
+    Returns:
+        str: Rendered HTML template with the list of states.
+    """
     states_data = sorted(list(storage.all(State).values()),
                          key=lambda x: x.name)
     return render_template('7-states_list.html', states=states_data)
@@ -19,7 +29,7 @@ def states_list():
 
 @app.teardown_appcontext
 def teardown_storage(exception):
-    """closes the storage on teardown"""
+    """Close the storage connection when the application context ends."""
     storage.close()
 
 
