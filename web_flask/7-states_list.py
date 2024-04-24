@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-"""
-Module that get states from storage and returns
+"""Module that get states from storage and returns
 """
 
 from flask import Flask, render_template
