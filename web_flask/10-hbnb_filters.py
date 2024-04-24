@@ -1,21 +1,24 @@
 #!/usr/bin/python3
 """
-Module that get states from storage and returns
+script that starts a Flask web application
 """
 
 from flask import Flask, render_template
 from models import storage
+from models.amenity import Amenity
 from models.state import State
 
 app = Flask(__name__)
 
 
-@app.route("/states_list", strict_slashes=False)
-def states_list():
+@app.route("/hbnb_filters", strict_slashes=False)
+def state_cities_list():
     """ Get states sorted by names and render on template """
-    states_data = sorted(list(storage.all(State).values()),
-                         key=lambda x: x.name)
-    return render_template('7-states_list.html', states=states_data)
+    states_data = list(storage.all(State).values())
+    amenity_data = list(storage.all(Amenity).values())
+    return render_template('10-hbnb_filters.html',
+                           states=states_data,
+                           amenities=amenity_data)
 
 
 @app.teardown_appcontext
